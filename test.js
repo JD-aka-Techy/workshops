@@ -1,4 +1,5 @@
 const { myAdder, myDoublerPusher, myResultFormatter, myArrayCounter, myReduceFunc } = require('./reducer.js');
+
 const chai = require('chai');
 const spies = require('chai-spies');
 const expect = chai.expect;
@@ -50,12 +51,12 @@ describe('Callback functions', () => {
     });
 
     it('returns the array with the original number doubled added',() => {
-      expect(myDoublerPusher([],1)).to.eql([1]);
+      expect(myDoublerPusher([], 1)).to.eql([2]);
     });
 
     it('returns the array with the original number doubled added to the end',() => {
-      expect(myDoublerPusher([1,2],3)).to.eql([1,2,3]);
-      expect(myDoublerPusher([1,2,3,4,5,6,1,2,3,4,5,6],7)).to.eql([1,2,3,4,5,6,1,2,3,4,5,6,7]);
+      expect(myDoublerPusher([1,2],3)).to.eql([1,2,6]);
+      expect(myDoublerPusher([1,2,3,4,5,6,1,2,3,4,5,6],7)).to.eql([1,2,3,4,5,6,1,2,3,4,5,6,14]);
     });
 
   });

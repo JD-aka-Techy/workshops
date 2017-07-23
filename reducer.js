@@ -16,7 +16,7 @@ function myAdder(a,b) {
  * and returns that new array
  */
 function myDoublerPusher(arr, num) {
-    return [...arr, num];
+    return [...arr, num * 2];
 }
 
 
@@ -40,7 +40,6 @@ function myArrayCounter(obj, item) {
     } else {
         obj[item] = 1;
     }
-
     return obj
 }
 
