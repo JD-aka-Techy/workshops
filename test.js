@@ -1,10 +1,10 @@
 const { myAdder, myDoublerPusher, myResultFormatter, myArrayCounter, myReduceFunc } = require('./reducer.js');
 
 const chai = require('chai');
-const spies = require('chai-spies');
+const sinon = require('sinon');
+const sinonChai = require("sinon-chai");
 const expect = chai.expect;
-chai.use(spies);
-
+chai.use(sinonChai);
 
 // these tests could probably do with cleaning up a little bit, were written in a hurry
 // maybe add works with reduce to show they are working as reduce callbacks?
@@ -158,9 +158,10 @@ describe('writing our own reduce function', () => {
     });
 
     it('calls the callback inside the function', () => {
-      const testCallback = chai.spy(() => {});
+      // const testCallback = chai.spy(() => {});
+      const testCallback = sinon.spy();
       myReduceFunc([1], testCallback, 0);
-      expect(testCallback).to.have.been.called();
+      expect(testCallback).to.have.been.called;
     });
 
   });
@@ -178,16 +179,15 @@ describe('writing our own reduce function', () => {
       });
 
       it('calls the function passed in for each item in the array.', () => {
-        const testCallback = chai.spy(() => {});
+        const testCallback = sinon.spy();
         myReduceFunc([1,2,3], testCallback, 0);
-        expect(testCallback).to.have.been.called.exactly(3);
+        expect(testCallback).to.have.been.callCount(3);
         myReduceFunc([1], testCallback, 0);
-        expect(testCallback).to.have.been.called.exactly(4);
+        expect(testCallback).to.have.been.callCount(4);
       });
 
       // these will need cleaning up, abstract out the called with functionality
       it('calls the callback function and passes initialValue as its first parameter', () => {
-        // chai spy called with is broken for some reason so hacking it
         const calledWith = [];
         const testCallback = (param1, param2) => {
           calledWith.push(param1);
@@ -197,7 +197,6 @@ describe('writing our own reduce function', () => {
       });
 
       it('calls the callback function with each item from the array as the second value', () => {
-        // chai spy called with is broken for some reason so hacking it
         const calledWith = [];
         const testCallback = (param1, param2) => {
           calledWith.push(param2);
@@ -216,7 +215,6 @@ describe('writing our own reduce function', () => {
   `, () => {
 
     it('passes initialValue to the calback on the first loop', () => {
-        // chai spy called with is broken for some reason so hacking it
         const calledWith = [];
         const testCallback = (acc, item) => {
           calledWith.push({acc, item});
@@ -226,7 +224,6 @@ describe('writing our own reduce function', () => {
     });
 
     it('replaces the initialValue with the result of each callback and passes this new value into the callback', () => {
-      // chai spy called with is broken for some reason so hacking it
       const calledWith = [];
       const testCallback = (acc, item) => {
         calledWith.push({acc, item});
@@ -260,7 +257,6 @@ describe('writing our own reduce function', () => {
   `, () => {
 
     it('passes in the index of each item in the array', () => {
-      // chai spy called with is broken for some reason so hacking it
       const calledWith = [];
       const testCallback = (acc, item, index) => {
         calledWith.push({acc, item, index});
@@ -271,7 +267,6 @@ describe('writing our own reduce function', () => {
     });
 
     it('passes in the original array for each item in the array', () => {
-      // chai spy called with is broken for some reason so hacking it
       const calledWith = [];
       const testCallback = (acc, item, index, arr) => {
         calledWith.push({acc, item, index, arr});
@@ -280,6 +275,18 @@ describe('writing our own reduce function', () => {
       myReduceFunc([1,2], testCallback, 42);
       expect(calledWith[1]).to.eql({ acc: 'im the new value', item: 2, index: 1, arr: [1,2] }); 
     });
+
+    function mySpy(spyOnFunc, returnValue) {
+
+      this.calledWith = [];
+
+      return () => {
+        spyOnFunc();
+      } 
+
+    }
+
+
 
   });
 
@@ -302,10 +309,6 @@ describe('writing our own reduce function', () => {
 
 
 });
-
-
-
-
 
 
 
