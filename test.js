@@ -1,9 +1,10 @@
-const { myAdder, myDoublerPusher, myResultFormatter, myArrayCounter, myReduceFunc } = require('./reducer.js');
+const { myAdder, myDoublerPusher, myResultFormatter, myArrayCounter, myReduceFunc, kittyRejigger } = require('./reducer.js');
 
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require("sinon-chai");
 const expect = chai.expect;
+const _ = require('lodash');
 chai.use(sinonChai);
 
 // these tests could probably do with cleaning up a little bit, were written in a hurry
@@ -276,18 +277,6 @@ describe('writing our own reduce function', () => {
       expect(calledWith[1]).to.eql({ acc: 'im the new value', item: 2, index: 1, arr: [1,2] }); 
     });
 
-    function mySpy(spyOnFunc, returnValue) {
-
-      this.calledWith = [];
-
-      return () => {
-        spyOnFunc();
-      } 
-
-    }
-
-
-
   });
 
 
@@ -312,12 +301,106 @@ describe('writing our own reduce function', () => {
 
 
 
-// ADVANCED - promise thens in series
-// dont yet have any real life example or examples that use the 4th callback param
+describe('kitty rejigger', () => {
+  // map data from string csv to json
+  // in format   Breed  name gender colour  birthdate              
+  let csvString1 = `Breed,Name,Gender,Colour,DOB
+Maine Coon,Fiona,Female,Orange,12/07/2016
+RagDoll,Joelle,Female,Pink,12/20/2016
+RagDoll,Major,Male,Yellow,04/11/2014
+Maine Coon,Ric,Male,Blue,11/28/2013
+Maine Coon,Martguerita,Female,Goldenrod,02/02/2017
+Maine Coon,Selia,Female,Purple,04/08/2017
+RagDoll,Nap,Male,Puce,12/27/2012
+Siamese,Odey,Male,Green,12/02/2016
+Maine Coon,Adriano,Male,Blue,04/03/2012
+Persian,Alair,Male,Mauv,09/03/2014
+Persian,Perri,Female,Maroon,12/28/2010
+Maine Coon,Thomasine,Female,Red,02/21/2012
+Maine Coon,Priscella,Female,Turquoise,02/08/2017
+RagDoll,Bonnie,Female,Puce,07/07/2010
+RagDoll,Putnem,Male,Mauv,08/03/2015
+Maine Coon,Elspeth,Female,Red,10/02/2015
+Persian,Dennie,Male,Puce,01/08/2016
+Maine Coon,Lilllie,Female,Teal,03/29/2013
+Siamese,Gib,Male,Indigo,06/06/2012
+RagDoll,Cornelle,Female,Yellow,05/16/2013`
 
-// helpers
+    let csvString2 = `Breed,Name,Gender,Colour,DOB
+Maine Coon,Fiona,Female,Orange,12/07/2016
+Maine Coon,Ric,Male,Blue,11/28/2013
+Maine Coon,Martguerita,Female,Goldenrod,02/02/2017
+Maine Coon,Selia,Female,Purple,04/08/2017
+Siamese,Odey,Male,Green,12/02/2016
+Maine Coon,Adriano,Male,Blue,04/03/2012
+Persian,Alair,Male,Mauv,09/03/2014
+Persian,Perri,Female,Maroon,12/28/2010
+Maine Coon,Thomasine,Female,Red,02/21/2012
+Maine Coon,Priscella,Female,Turquoise,02/08/2017
+Maine Coon,Elspeth,Female,Red,10/02/2015
+Persian,Dennie,Male,Puce,01/08/2016
+Maine Coon,Lilllie,Female,Teal,03/29/2013
+Siamese,Gib,Male,Indigo,06/06/2012`
+
+  it('returns an object', () => {
+     expect(isObject(kittyRejigger(csvString1))).to.be.true;
+  });
 
 
+  it('creates an item in the json result for each breed', () => {
+    expect(Object.keys(kittyRejigger(csvString1)).length).to.equal(4);
+    expect(Object.keys(kittyRejigger(csvString2)).length).to.equal(3);
+  });
+
+  it('has the right keys', () => {
+    // dont have time to implement pattern matcher right now
+    let actual = Object.keys(kittyRejigger(csvString1))
+    expect(actual).to.have.same.members(['Maine Coon', 'Siamese', 'Persian', 'RagDoll' ]);
+
+    actual = Object.keys(kittyRejigger(csvString2))
+    expect(actual).to.have.same.members(['Maine Coon', 'Siamese', 'Persian' ]);
+  })
+
+  it('doesnt include the header line in the result', () => {
+    // not ideal in a rush
+    const str = JSON.stringify(kittyRejigger(csvString1))
+    expect(str).not.to.contain('Breed')
+  });
+
+  it('contains the right results in the right format', () => {
+    let expected1 = {"Maine Coon":[{"name":"Fiona","gender":"Female","colour":"Orange","dob":"12/07/2016"},{"name":"Ric","gender":"Male","colour":"Blue","dob":"11/28/2013"},{"name":"Martguerita","gender":"Female","colour":"Goldenrod","dob":"02/02/2017"},{"name":"Selia","gender":"Female","colour":"Purple","dob":"04/08/2017"},{"name":"Adriano","gender":"Male","colour":"Blue","dob":"04/03/2012"},{"name":"Thomasine","gender":"Female","colour":"Red","dob":"02/21/2012"},{"name":"Priscella","gender":"Female","colour":"Turquoise","dob":"02/08/2017"},{"name":"Elspeth","gender":"Female","colour":"Red","dob":"10/02/2015"},{"name":"Lilllie","gender":"Female","colour":"Teal","dob":"03/29/2013"}],"RagDoll":[{"name":"Joelle","gender":"Female","colour":"Pink","dob":"12/20/2016"},{"name":"Major","gender":"Male","colour":"Yellow","dob":"04/11/2014"},{"name":"Nap","gender":"Male","colour":"Puce","dob":"12/27/2012"},{"name":"Bonnie","gender":"Female","colour":"Puce","dob":"07/07/2010"},{"name":"Putnem","gender":"Male","colour":"Mauv","dob":"08/03/2015"},{"name":"Cornelle","gender":"Female","colour":"Yellow","dob":"05/16/2013"}],"Siamese":[{"name":"Odey","gender":"Male","colour":"Green","dob":"12/02/2016"},{"name":"Gib","gender":"Male","colour":"Indigo","dob":"06/06/2012"}],"Persian":[{"name":"Alair","gender":"Male","colour":"Mauv","dob":"09/03/2014"},{"name":"Perri","gender":"Female","colour":"Maroon","dob":"12/28/2010"},{"name":"Dennie","gender":"Male","colour":"Puce","dob":"01/08/2016"}]}
+    let result1 = kittyRejigger(csvString1);
+    let test1 = _.isEqual(sortResult(expected1), sortResult(result1))
+    expect(test1).to.be.true;
+
+    let expected2 = {"Maine Coon":[{"name":"Fiona","gender":"Female","colour":"Orange","dob":"12/07/2016"},{"name":"Ric","gender":"Male","colour":"Blue","dob":"11/28/2013"},{"name":"Martguerita","gender":"Female","colour":"Goldenrod","dob":"02/02/2017"},{"name":"Selia","gender":"Female","colour":"Purple","dob":"04/08/2017"},{"name":"Adriano","gender":"Male","colour":"Blue","dob":"04/03/2012"},{"name":"Thomasine","gender":"Female","colour":"Red","dob":"02/21/2012"},{"name":"Priscella","gender":"Female","colour":"Turquoise","dob":"02/08/2017"},{"name":"Elspeth","gender":"Female","colour":"Red","dob":"10/02/2015"},{"name":"Lilllie","gender":"Female","colour":"Teal","dob":"03/29/2013"}],"Siamese":[{"name":"Odey","gender":"Male","colour":"Green","dob":"12/02/2016"},{"name":"Gib","gender":"Male","colour":"Indigo","dob":"06/06/2012"}],"Persian":[{"name":"Alair","gender":"Male","colour":"Mauv","dob":"09/03/2014"},{"name":"Perri","gender":"Female","colour":"Maroon","dob":"12/28/2010"},{"name":"Dennie","gender":"Male","colour":"Puce","dob":"01/08/2016"}]}
+    let result2 = kittyRejigger(csvString2);
+    let test2 = _.isEqual(sortResult(expected2), sortResult(result2))
+    expect(test2).to.be.true;
+  });
+
+});
+
+
+
+
+function sortResult(result) {
+  let sorted
+  try {
+    let keys = Object.keys(result).sort((a, b) => a.localeCompare(b));
+
+    sorted = keys.reduce((acc, key) => {
+      const sortedCats = result[key].sort((a, b) => a.name.localeCompare(b.name));
+      let newObj = Object.assign(acc);
+      newObj[key] = sortedCats;
+      return newObj;
+    }, {});
+    return sorted;
+  }
+  catch (e) {
+    console.log('kittyRejigger returned the wrong format!', e)
+  }
+}
 
 
 function isAFunction(func) {

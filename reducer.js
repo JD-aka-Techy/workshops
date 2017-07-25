@@ -3,8 +3,8 @@
  * it should take two numbers
  * and return the sum of the two numbers
  */
-function myAdder(a,b) {
- return a+b
+function myAdder() {
+
 }
 
 
@@ -15,8 +15,8 @@ function myAdder(a,b) {
  * adds it to the end of the array
  * and returns that new array
  */
-function myDoublerPusher(arr, num) {
-    return [...arr, num * 2];
+function myDoublerPusher() {
+
 }
 
 
@@ -27,42 +27,53 @@ function myDoublerPusher(arr, num) {
  * if the index is an odd number turn it into a string in the format: grade: {number}
  * add the string to the array and return it.
  */  
-function myResultFormatter(arr, item, index) {
-    return [...arr, `${index % 2 !== 0 ? 'grade' : 'studentId'}: ${item}`];
+function myResultFormatter() {
 }
 
 
 
 
-function myArrayCounter(obj, item) {
-    if(obj.hasOwnProperty(item)) {
-        obj[item] ++;
-    } else {
-        obj[item] = 1;
-    }
-    return obj
+function myArrayCounter() {
+
 }
 
 
 /*
  * writing our own reduce function
  */
-function myReduceFunc(arr, callback, initialValue) {
+function myReduceFunc() {
   
-  var originalArray = [...arr]
 
-  if(initialValue === undefined) {
-      var initialValue = arr[0];
-      arr.splice(0,1)
-  }
 
-  for(let x = 0; x < arr.length; x++) {
+}
 
-    initialValue = callback(initialValue, arr[x], x, originalArray);
 
-  }
-
-  return initialValue;
+/*
+ *
+ * write a function that uses reduce to take a csv string in the format
+ * Breed  name gender colour  birthdate              
+ * eg "Breed,Name,Gender,Colour,DOB
+ *     Maine Coon,Fiona,Female,Orange,12/07/2016
+ *     RagDoll,Joelle,Female,Pink,12/20/2016
+ *     RagDoll,Major,Male,Yellow,04/11/2014
+ *     Maine Coon,Ric,Male,Blue,11/28/2013
+ *     Maine Coon,Martguerita,Female,Goldenrod,02/02/2017"
+ *  and returns a json object in the format eg:
+ *  {
+ *    "Maine Coon": [
+ *      {
+ *        name: "Fiona",
+ *        gender: "Female",
+ *        colour: "Orange",
+ *        dob: "12/07/2016"
+ *      },
+ *      ... other maine coons
+ *    ],
+ *    ... other breeds of cat
+ *  }   
+ *
+ */
+function kittyRejigger() {
 
 }
 
@@ -73,6 +84,6 @@ module.exports = {
     myDoublerPusher,
     myResultFormatter,
     myArrayCounter,
-    myReduceFunc
-
+    myReduceFunc,
+    kittyRejigger
 }
